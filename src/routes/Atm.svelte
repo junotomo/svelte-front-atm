@@ -1,20 +1,26 @@
 <script>
     import { onMount ,afterUpdate} from 'svelte'
-    import Button, { Label } from '@smui/button';
+    import Button, { Label } from '@smui/button'
     import Note from './note.svelte'
-    import MoneyCounter from "./moneyCounter.svelte";
+    import MoneyCounter from "./moneyCounter.svelte"
+
 
     
     let withdraw = {}
     let amount = ""
-    let cash = {}
- let data = {}
+    let cashtype = {}
+    let data = {}
+
+    onMount(async () => {
+        getBalance()
+        getAtmData()
+	});
 
     const getAtmData = async () => {
         try {
             const response = await fetch("http://localhost:3000/atm/atmData")
             const fetchObj = await response.json()
-            cash = fetchObj["number of notes"]
+            cashtype = fetchObj["number of notes"]
         } catch (error) {
             console.log(error)
         }
@@ -25,17 +31,17 @@
         try {
             const response = await fetch("http://localhost:3000/atm/balance")
             data = await response.json()
+            console.log(data)
         } catch (error) {
             console.log(error)
         }
 
     }
-
+    
     // @ts-ignore
     const withdrawMoney = async ()=> {
         try {
            
-
             const response = await fetch("http://localhost:3000/atm/withdrawal", {
                     method: "PUT",
                     headers: {
@@ -46,9 +52,11 @@
                         amount: amount
                     })
                 })
-            withdraw = await response.json()
-            getBalance()
-            getAtmData()
+             const updateData= await response.json()
+             withdraw = updateData.receividNotes
+             data = updateData.newBalance
+             cashtype = updateData.newCashQtd
+
         } catch (error) {
             console.log(error)
             alert("Valor inválido")
@@ -62,7 +70,12 @@
 
     <div class="screen">
         <h1>Saldo atual :</h1>
-        <h2>$:{data.balance} </h2>
+        {#if typeof data == 'object'}
+            <h2>{data.balance} </h2>
+        {:else}
+            <h2>{data} </h2>
+        {/if}
+     
     </div>
 
     <div class="form">
@@ -71,8 +84,6 @@
 
     <div class="interface-btn">
         <Button on:click={() => withdrawMoney()} 
-            on:click={() => getBalance()}
-            on:click={() => getAtmData()}
             
             touch variant="raised">
             <Label>Saque</Label>
@@ -86,5 +97,5 @@
     </div>
 
 </div>
-<MoneyCounter atmData={cash}/>
+<MoneyCounter atmData={cashtype}/>
 
