@@ -32,7 +32,7 @@ body {
     border: 2px rgb(120, 121, 120);
     padding: 1em;
     gap: 1em;
-    border-radius: 13% 0% 0% 13%;
+    border-radius: 5% 0% 0% 5%;
     background-color: #27566b;
     width: 60%;
 }
@@ -98,6 +98,6 @@ body {
     display: flex;
     flex-flow: column;
     background-color: #148899;
-    border-radius: 0 13% 13% 0;
+    border-radius: 0 5% 5% 0;
     padding: 1em;
 }

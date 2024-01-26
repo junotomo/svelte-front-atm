@@ -1,8 +1,11 @@
 <script>
     import { onMount ,afterUpdate} from 'svelte'
+    import {PUBLIC_ATM_NOTES_NUMBER, PUBLIC_BALANCE_URL,PUBLIC_WITHDRAWL} from '$env/static/public'
     import Button, { Label } from '@smui/button'
     import Note from './note.svelte'
     import MoneyCounter from "./moneyCounter.svelte"
+
+
 
 
     
@@ -18,7 +21,7 @@
 
     const getAtmData = async () => {
         try {
-            const response = await fetch("http://localhost:3000/atm/atmData")
+            const response = await fetch(PUBLIC_ATM_NOTES_NUMBER)
             const fetchObj = await response.json()
             cashtype = fetchObj["number of notes"]
         } catch (error) {
@@ -29,7 +32,7 @@
 
     const getBalance = async () => {
         try {
-            const response = await fetch("http://localhost:3000/atm/balance")
+            const response = await fetch(PUBLIC_BALANCE_URL)
             data = await response.json()
             console.log(data)
         } catch (error) {
@@ -42,7 +45,7 @@
     const withdrawMoney = async ()=> {
         try {
            
-            const response = await fetch("http://localhost:3000/atm/withdrawal", {
+            const response = await fetch(PUBLIC_WITHDRAWL, {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
@@ -71,11 +74,12 @@
     <div class="screen">
         <h1>Saldo atual :</h1>
         {#if typeof data == 'object'}
-            <h2>{data.balance} </h2>
+            <h2>{data.balance} </h2>   
+        {:else if typeof data == undefined}
+            <h2> Valor não encontrado</h2>
         {:else}
             <h2>{data} </h2>
         {/if}
-     
     </div>
 
     <div class="form">
@@ -97,5 +101,6 @@
     </div>
 
 </div>
+
 <MoneyCounter atmData={cashtype}/>
 
